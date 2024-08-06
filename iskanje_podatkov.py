@@ -1,26 +1,51 @@
-import re
 import requests
-import csv
 from bs4 import BeautifulSoup
+import csv
 
-
-def html(url_povezava):
-    """poišče html, podane spletne strani in ga vrne kot niz"""
-    html = requests.get(url_povezava).text
-    doc = BeautifulSoup(html, 'html.parser')
-    return doc
-
-url = 'https://www.bolha.com/avto-oglasi'
-rezultat = html(url)
-#print(rezultat)
-
-sez = []
-
-
-for stran in range(1, 12):
-    url1 = f'https://www.bolha.com/avto-oglasi?page={stran}'
-    stran = requests.get(url1).text
-    doc1 = BeautifulSoup(stran, 'html.parser')
+def pridobi_podatke_o_rojstnih_dnevih(mesec, dan):
+    # Formatiranje meseca in dneva z dvema mestoma (npr. 08 za avgust, 06 za šesti dan)
+    mesec_dan = f"{mesec:02}-{dan:02}"
     
+    # Prilagojen URL za določen datum
+    url = f"https://www.imdb.com/search/name/?birth_monthday={mesec_dan}"
 
- 
+    # Pošiljanje HTTP GET zahteve
+    rezultat = requests.get(url)
+
+    # Preverjanje uspešnosti zahteve
+    if rezultat.status_code == 200:
+        # Parsiranje HTML vsebine
+        soup = BeautifulSoup(rezultat.content, 'html.parser')
+
+        # Iskanje vseh osebnosti na strani
+        osebnosti = soup.find_all('div', class_='lister-item mode-detail')
+
+        # Ime datoteke temelji na datumu
+        ime_datoteke = f"imdb_birthdays_{mesec_dan}.csv"
+
+        # Odpiranje CSV datoteke za pisanje
+        with open(ime_datoteke, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Ime', 'Poklic', 'Znan po'])
+
+            # Obdelava posameznih osebnosti
+            for oseba in osebnosti:
+                # Pridobivanje imena
+                ime_element = oseba.find('h3', class_='lister-item-header').find('a')
+                ime = ime_element.get_text(strip=True) if ime_element else 'Ni imena'
+
+                # Pridobivanje poklica
+                poklic_element = oseba.find('p', class_='text-muted text-small')
+                poklic = poklic_element.get_text(strip=True).split('|')[0].strip() if poklic_element else 'Ni poklica'
+
+                # Pridobivanje znanih del
+                znan_po_element = oseba.find_all('p')[2].find_all('a')
+                znan_po = ', '.join([delce.get_text(strip=True) for delce in znan_po_element]) if znan_po_element else 'Ni znanih del'
+
+                # Zapisovanje podatkov v CSV datoteko
+                writer.writerow([ime, poklic, znan_po])
+    else:
+        print(f"Napaka pri dostopu do strani: {rezultat.status_code}")
+
+# Primer uporabe funkcije za 6. avgust
+pridobi_podatke_o_rojstnih_dnevih(8, 6)
