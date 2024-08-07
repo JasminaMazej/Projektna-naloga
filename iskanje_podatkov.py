@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import time
 
 def pridobi_podatke_o_rojstnih_dnevih(mesec, dan):
     # Formatiranje meseca in dneva z dvema mestoma (npr. 08 za avgust, 06 za šesti dan)
@@ -9,8 +10,13 @@ def pridobi_podatke_o_rojstnih_dnevih(mesec, dan):
     # Prilagojen URL za določen datum
     url = f"https://www.imdb.com/search/name/?birth_monthday={mesec_dan}"
 
-    # Pošiljanje HTTP GET zahteve
-    rezultat = requests.get(url)
+    # Določitev uporabniškega agenta
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+
+    # Pošiljanje HTTP GET zahteve z glavo
+    rezultat = requests.get(url, headers=headers)
 
     # Preverjanje uspešnosti zahteve
     if rezultat.status_code == 200:
@@ -44,6 +50,9 @@ def pridobi_podatke_o_rojstnih_dnevih(mesec, dan):
 
                 # Zapisovanje podatkov v CSV datoteko
                 writer.writerow([ime, poklic, znan_po])
+        
+        # Dodana časovna zakasnitev
+        time.sleep(2)
     else:
         print(f"Napaka pri dostopu do strani: {rezultat.status_code}")
 
