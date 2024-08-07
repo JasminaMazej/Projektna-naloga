@@ -20,7 +20,7 @@ def zdruzi_csv(mapa, nova_dat):
     print(f'Datoteke so združene v {nova_dat}.')
 
 
-def dodaj_rojstni_dan(mapa_za_csv):
+def dodaj_rojstni_dan(mapa):
     # Slovar za pretvorbo imen mesecev v številke
     meseci = {
         'january': '01', 'february': '02', 'march': '03', 'april': '04', 'may': '05',
@@ -28,34 +28,34 @@ def dodaj_rojstni_dan(mapa_za_csv):
         'november': '11', 'december': '12'
     }
     
-    for datoteka in os.listdir(mapa_za_csv):
+    for datoteka in os.listdir(mapa):
         if datoteka.endswith('.csv'):
-            # Preveri, ali ime datoteke ustreza vzorcu
-            print(f"Obdelujem datoteko: {datoteka}")  # Diagnosticiranje
+            #preveri, ali ime datoteke ustreza vzorcu
+            print(f"Obdelujem datoteko: {datoteka}")  
             match = re.match(r'famous_birthdays_(\D+)(\d+).csv', datoteka)
             if match:
                 mesec_imenik, dan = match.groups()
                 
-                # Pretvori mesec v številko
+                #pretvori mesec v številko
                 mesec = meseci.get(mesec_imenik.lower(), 'Unknown')
-                print(f"Mesec imenik: {mesec_imenik}, Mesec številka: {mesec}")  # Diagnosticiranje
+                print(f"Mesec imenik: {mesec_imenik}, Mesec številka: {mesec}")  
                 
-                # Prilagodi format rojstnega dne
+                #prilagodi format rojstnega dne
                 if mesec == 'Unknown':
-                    rojstni_dan = f'Unknown-{dan}'
+                    rojstni_dan = f'{dan}-Unknown'
                 else:
-                    # Zagotovi, da dan ima pravilno formatiranje (01-31) in mesec dvomestni format
-                    dan = dan.zfill(2)  # Dodaj ničlo spredaj, če je dan enomesten
+                    #zagotovi, da dan ima pravilno formatiranje in mesec dvomestni format
+                    dan = dan.zfill(2)  #doda ničlo spredaj, če je dan enomesten
                     rojstni_dan = f'{dan}-{mesec}'
 
-                # Preberi CSV datoteko
-                df = pd.read_csv(os.path.join(mapa_za_csv, datoteka))
+                #prebere CSV datoteko
+                df = pd.read_csv(os.path.join(mapa, datoteka))
                 
-                # Dodaj stolpec z rojstnim dnevom
+                #doda stolpec z rojstnim dnevom
                 df['Rojstni dan'] = rojstni_dan
                 
-                # Shrani posodobljeno datoteko
-                df.to_csv(os.path.join(mapa_za_csv, datoteka), index=False)
+                #shrani posodobljeno datoteko
+                df.to_csv(os.path.join(mapa, datoteka), index=False)
                 print(f"Posodobljena datoteka: {datoteka} - Rojstni dan: {rojstni_dan}")
             else:
                 print(f"Imena datoteke {datoteka} ni mogoče razbrati.")
