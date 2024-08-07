@@ -1,26 +1,8 @@
-import os
 import pandas as pd
+import os
 import re
 
-def zdruzi_csv(mapa, nova_dat):
-    #funkcija zdruzi vse csv-je v mapi v eno samo datoteko
-    vse = [f for f in os.listdir(mapa) if f.endswith('.csv')]
-    #seznam DataFrame-ov za združitev
-    vsi_df = []
-
-    for dat in vse:
-        pot_do_dat = os.path.join(mapa, dat)
-        df = pd.read_csv(pot_do_dat)
-        vsi_df.append(df)
-
-    #zdruzimo vse DF v enega
-    zdruzen = pd.concat(vsi_df, ignore_index=True)
-
-    zdruzen.to_csv(nova_dat, index=False)
-    print(f'Datoteke so združene v {nova_dat}.')
-
-
-def dodaj_rojstni_dan(mapa_za_csv):
+def dodaj_rojstni_dan1(mapa_za_csv):
     # Slovar za pretvorbo imen mesecev v številke
     meseci = {
         'january': '01', 'february': '02', 'march': '03', 'april': '04', 'may': '05',
@@ -30,15 +12,20 @@ def dodaj_rojstni_dan(mapa_za_csv):
     
     for datoteka in os.listdir(mapa_za_csv):
         if datoteka.endswith('.csv'):
-            # Preveri, ali ime datoteke ustreza vzorcu
             print(f"Obdelujem datoteko: {datoteka}")  # Diagnosticiranje
+            
+            # Preveri, ali ime datoteke ustreza vzorcu
             match = re.match(r'famous_birthdays_(\D+)(\d+).csv', datoteka)
             if match:
                 mesec_imenik, dan = match.groups()
                 
-                # Pretvori mesec v številko
+                # Prilagodi mesec in dan
                 mesec = meseci.get(mesec_imenik.lower(), 'Unknown')
-                print(f"Mesec imenik: {mesec_imenik}, Mesec številka: {mesec}")  # Diagnosticiranje
+                
+                # Preveri in popravi mesec, če je mesec Unknown
+                if mesec == 'Unknown':
+                    print(f"Neznan mesec: {mesec_imenik}")
+                    mesec = 'Unknown'
                 
                 # Prilagodi format rojstnega dne
                 if mesec == 'Unknown':
@@ -61,3 +48,5 @@ def dodaj_rojstni_dan(mapa_za_csv):
                 print(f"Imena datoteke {datoteka} ni mogoče razbrati.")
         else:
             print(f"Datoteka {datoteka} ni CSV format.")
+
+
