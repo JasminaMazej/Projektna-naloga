@@ -33,10 +33,10 @@ for day in range(1, 32):
 
 
 #pridobimo podatke za februar
-for day in range(1, 30):
+for day in range(7, 30):
     pod_feb = podatki_februar(day)
     izlusceni_feb = izlusci_podatke(pod_feb)
-    shrani_v_csv(izlusceni_feb, f'famous_birthday_february{day}.csv', 'podatki')
+    shrani_v_csv(izlusceni_feb, f'famous_birthdays_february{day}.csv', 'podatki')
 
 #pridobimo podatke za mesece, ki imajo po 30 dni
 for day in range(1, 31):
