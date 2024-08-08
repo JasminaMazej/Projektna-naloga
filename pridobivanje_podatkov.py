@@ -1,4 +1,4 @@
-from scraping_data import *
+from funkcije_zajem import *
 
 for day in range(1, 32):
     #pridobimo podatke za julij in avgust
