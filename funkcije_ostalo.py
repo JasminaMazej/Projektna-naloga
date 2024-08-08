@@ -95,25 +95,25 @@ def doloci_horoskop(dan, mesec):
     else:
         return 'Neznan'
 
-def dodaj_horoskop_v_datoteko(ime_datoteke):
-    # Branje obstoječe datoteke
-    with open(ime_datoteke, mode='r', newline='', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
+def dodaj_horoskop_v_datoteko(datoteka):
+    #branje obstoječe datoteke
+    with open(datoteka, mode='r', newline='', encoding='utf-8') as dat:
+        reader = csv.DictReader(dat)
         podatki = list(reader)
     
-    # Dodajanje stolpca "Horoskop"
+    #dodajanje stolpca 'Horoskop'
     for vrstica in podatki:
         rojstni_dan = vrstica['Rojstni dan']
         dan, mesec = rojstni_dan.split('-')
         horoskop = doloci_horoskop(dan, mesec)
         vrstica['Horoskop'] = horoskop
     
-    # Pisanje posodobljenih podatkov nazaj v datoteko
-    with open(ime_datoteke, mode='w', newline='', encoding='utf-8') as file:
+    #pisanje posodobljenih podatkov nazaj v datoteko
+    with open(datoteka, mode='w', newline='', encoding='utf-8') as dat:
         fieldnames = ['Ime', 'Starost', 'Poklic', 'Rojstni dan', 'Horoskop']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer = csv.DictWriter(dat, fieldnames=fieldnames)
         
         writer.writeheader()
         writer.writerows(podatki)
     
-    print(f'Posodobljena datoteka: {ime_datoteke}')
+    print(f'Posodobljena datoteka: {datoteka}')
