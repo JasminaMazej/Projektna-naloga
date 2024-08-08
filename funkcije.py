@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import re
+import csv
 
 def zdruzi_csv(mapa, nova_dat):
     #funkcija zdruzi vse csv-je v mapi v eno samo datoteko
@@ -20,6 +21,7 @@ def zdruzi_csv(mapa, nova_dat):
     print(f'Datoteke so združene v {nova_dat}.')
 
 
+#k podatkom želimo dodati še rojstni dan oseb, ki je razviden iz imena datoteke
 def dodaj_rojstni_dan(mapa):
     # Slovar za pretvorbo imen mesecev v številke
     meseci = {
@@ -31,14 +33,14 @@ def dodaj_rojstni_dan(mapa):
     for datoteka in os.listdir(mapa):
         if datoteka.endswith('.csv'):
             #preveri, ali ime datoteke ustreza vzorcu
-            print(f"Obdelujem datoteko: {datoteka}")  
+            print(f'Obdelujem datoteko: {datoteka}')  
             match = re.match(r'famous_birthdays_(\D+)(\d+).csv', datoteka)
             if match:
                 mesec_imenik, dan = match.groups()
                 
                 #pretvori mesec v številko
                 mesec = meseci.get(mesec_imenik.lower(), 'Unknown')
-                print(f"Mesec imenik: {mesec_imenik}, Mesec številka: {mesec}")  
+                print(f'Mesec imenik: {mesec_imenik}, Mesec številka: {mesec}')  
                 
                 #prilagodi format rojstnega dne
                 if mesec == 'Unknown':
@@ -56,8 +58,62 @@ def dodaj_rojstni_dan(mapa):
                 
                 #shrani posodobljeno datoteko
                 df.to_csv(os.path.join(mapa, datoteka), index=False)
-                print(f"Posodobljena datoteka: {datoteka} - Rojstni dan: {rojstni_dan}")
+                print(f'Posodobljena datoteka: {datoteka} - Rojstni dan: {rojstni_dan}')
             else:
-                print(f"Imena datoteke {datoteka} ni mogoče razbrati.")
+                print(f'Imena datoteke {datoteka} ni mogoče razbrati.')
         else:
-            print(f"Datoteka {datoteka} ni CSV format.")
+            print(f'Datoteka {datoteka} ni CSV format.')
+
+def doloci_horoskop(dan, mesec):
+    mesec = int(mesec)
+    dan = int(dan)
+
+    if (mesec == 3 and dan >= 21) or (mesec == 4 and dan <= 19):
+        return 'Oven'
+    elif (mesec == 4 and dan >= 20) or (mesec == 5 and dan <= 20):
+        return 'Bik'
+    elif (mesec == 5 and dan >= 21) or (mesec == 6 and dan <= 20):
+        return 'Dvojčka'
+    elif (mesec == 6 and dan >= 21) or (mesec == 7 and dan <= 22):
+        return 'Rak'
+    elif (mesec == 7 and dan >= 23) or (mesec == 8 and dan <= 22):
+        return 'Lev'
+    elif (mesec == 8 and dan >= 23) or (mesec == 9 and dan <= 22):
+        return 'Devica'
+    elif (mesec == 9 and dan >= 23) or (mesec == 10 and dan <= 22):
+        return 'Tehtnica'
+    elif (mesec == 10 and dan >= 23) or (mesec == 11 and dan <= 21):
+        return 'Škorpijon'
+    elif (mesec == 11 and dan >= 22) or (mesec == 12 and dan <= 21):
+        return 'Strelec'
+    elif (mesec == 12 and dan >= 22) or (mesec == 1 and dan <= 19):
+        return 'Kozorog'
+    elif (mesec == 1 and dan >= 20) or (mesec == 2 and dan <= 18):
+        return 'Vodnar'
+    elif (mesec == 2 and dan >= 19) or (mesec == 3 and dan <= 20):
+        return 'Ribi'
+    else:
+        return 'Neznan'
+
+def dodaj_horoskop_v_datoteko(ime_datoteke):
+    # Branje obstoječe datoteke
+    with open(ime_datoteke, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        podatki = list(reader)
+    
+    # Dodajanje stolpca "Horoskop"
+    for vrstica in podatki:
+        rojstni_dan = vrstica['Rojstni dan']
+        dan, mesec = rojstni_dan.split('-')
+        horoskop = doloci_horoskop(dan, mesec)
+        vrstica['Horoskop'] = horoskop
+    
+    # Pisanje posodobljenih podatkov nazaj v datoteko
+    with open(ime_datoteke, mode='w', newline='', encoding='utf-8') as file:
+        fieldnames = ['Ime', 'Starost', 'Poklic', 'Rojstni dan', 'Horoskop']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        
+        writer.writeheader()
+        writer.writerows(podatki)
+    
+    print(f'Posodobljena datoteka: {ime_datoteke}')
