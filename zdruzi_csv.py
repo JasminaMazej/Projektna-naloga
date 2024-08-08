@@ -5,4 +5,4 @@ from funkcije import *
 dodaj_rojstni_dan('podatki')
 
 #združimo vse datoteke
-zdruzi_csv('podatki', 'tabela.csv')
+zdruzi_csv('podatki', 'tabela_podatki.csv')
