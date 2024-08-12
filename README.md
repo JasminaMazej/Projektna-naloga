@@ -2,10 +2,12 @@
 Avtor: Jasmina Mazej
 
 ## Uvod
-Za projektno nalogo sem se odločila analizirati podatke na spletni strani (https://www.famousbirthdays.com/), ki vsebuje znane osebnosti in njihove poklice/vlogo, rojene na nek datum.
+Za projektno nalogo sem se odločila analizirati podatke na spletni strani (https://www.famousbirthdays.com/), 
+ki vsebuje znane osebnosti in njihove poklice/vlogo, rojene na nek datum.
 
 ## Navodila za uporabo
-Za delovanje funkcij mora imeti uporabnik naložene knjižice re, requests, BeautifulSoup, pandas, csv, os in matplotlib.pyplot.
+Za delovanje funkcij mora imeti uporabnik naložene knjižice re, requests, BeautifulSoup, 
+pandas, csv, os in matplotlib.pyplot.
 V csv-ju pri nekaterih osebah pod poklic piše Family Member, saj niso znani zaradi specifičnega razloga.
 
 ## Opis datotek
