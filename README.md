@@ -1,5 +1,5 @@
 # Projektna naloga 
-Avtor: Jasmina Mazej
+Avtorica: Jasmina Mazej
 
 ## Uvod
 Za projektno nalogo sem se odločila analizirati podatke na spletni strani (https://www.famousbirthdays.com/), 
